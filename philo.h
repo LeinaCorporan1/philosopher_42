@@ -2,6 +2,16 @@
 # define PHILO_H
 
 #include <pthread.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef	struct s_philo
+{
+	int	fork;
+	int	id;
+	pthread_t phi;
+
+} t_philo;
 
 typedef struct s_stat
 {
@@ -10,5 +20,9 @@ typedef struct s_stat
 	int	think;
 	int	nb_philo;
 	int	m_eat;
-	pthread_t	philo;
-}
+	int	die;
+	t_philo	*philo;
+	pthread_mutex_t *fork;
+}	t_stat;
+
+#endif
