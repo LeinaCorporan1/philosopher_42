@@ -33,9 +33,41 @@ int	ft_atoi(const char *str)
 	return (res * sign);
 }
 
-int init_philo (t_philo )
+int	init_fork(t_stat *data)
 {
-	
+	int	i;
+
+	i = 0;
+	while (i < data->nb_philo)
+	{
+		if (pthread_mutex_init(&data->fork[i], NULL))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	init_philo(t_stat *data)
+{
+	int i;
+
+	i = 0;
+	data->philo = malloc(sizeof(t_philo) *data->nb_philo + 1);
+	if(!data->philo)
+		return (0);
+	while(i < data->nb_philo)
+	{
+		data->philo[i].id = i + 1;
+		data->philo[i].l_fork = i;
+		if (i != 0)
+			data->philo[i].r_fork = (i + 1) % data->nb_philo;
+		else
+			data->philo[i].r_fork = data->nb_philo;
+		printf("i = %d id %d left = %d right = %d\n",i , data->philo[i].id, data->philo[i].l_fork, data->philo[i].r_fork);
+		data->philo[i].data = data;
+		i++;
+	}
+	return (1);
 }
 
 int	init_stat(char **av, t_stat *data)
@@ -45,25 +77,35 @@ int	init_stat(char **av, t_stat *data)
 	data->eat = ft_atoi(av[3]);
 	data->sleep = ft_atoi(av[4]);
 	if (av[5])
-		data->nb_philo = ft_atoi(av[5]);
+		data->m_eat = ft_atoi(av[5]);
 	data->philo = malloc(sizeof(t_philo) * data->nb_philo);
 	if (!data->philo)
 		return (0);
 	data->fork = malloc(sizeof(pthread_mutex_t) * data->nb_philo);
 	if (!data->fork)
 		return (0);
-
+	if (!init_philo(data))
+		return (0);
+	if (!init_fork(data))
+		return (0);
 }
 
-void	*test(void *a)
+void	journey
+
+void	*test(void *philosopher)
 {
-	int i;
+	t_philo *philo;
 
-	i = *(int *)a;
-	pthread_mutex_lock(&fork[i]);
-	printf(";y i = %d\n", i);
-	pthread_mutex_unlock(&fork[i]);
-
+	philo = (t_philo *)philosopher;
+	if (philo->id % 2 == 0)
+		usleep(15000);
+	pthread_mutex_lock(&philo->data->fork[philo->l_fork]);
+	printf("philo {%d} is taken left fork [%d]\n",philo-> id, philo->l_fork);
+	pthread_mutex_lock(&philo->data->fork[philo->r_fork]);
+	printf("philo {%d} is taken right fork [%d]\n",philo-> id, philo->r_fork);
+	
+	pthread_mutex_unlock(&philo->data->fork[philo->l_fork]);
+	pthread_mutex_unlock(&philo->data->fork[philo->r_fork]);
 
 }
 
@@ -78,27 +120,29 @@ int main(int ac, char **av)
 		return (0);
 	printf("done\n");
 	int i;
-
 	i = 0;
-	while(i <= data.nb_philo)
+
+	while (i < data.nb_philo)
 	{
-		int *a = malloc(sizeof(int));
-		*a = i;
+		printf("thed id 0f philo[%d] = [%d]\n", i, data.philo[i].id);
+		i++;
+	}
+	 i  = 0;
+	while(i < data.nb_philo)
+	{
 		pthread_mutex_init(&data.fork[i], NULL);
-		if (pthread_create(&data.philo[i].phi,NULL, &test, NULL) != 0)
+		if (pthread_create(&data.philo[i].phi,NULL, &test, &data.philo[i]) != 0)
 			return (0);
 		printf ("created at %d\n",i);
 		i ++;
 	}
 	i = 0;
 
-	while(i <= data.nb_philo)
+	while(i < data.nb_philo)
 	{
 		if (pthread_join(data.philo[i].phi,NULL) != 0)
 			return (0);
 		i ++;
 	}
-
-
-		// return (1);
+		return (1);
 }

@@ -4,13 +4,15 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 typedef	struct s_philo
 {
-	int	fork;
+	int r_fork;
+	int l_fork;
 	int	id;
+	struct s_stat	*data;
 	pthread_t phi;
-
 } t_philo;
 
 typedef struct s_stat
