@@ -3,7 +3,9 @@ NAME	=	philo
 CC	=	gcc
 FLAGS	=-Wall -g3 -Wextra -Werror -pthread
 
-SRC = main.c
+SRC = main.c \
+	init.c \
+	utils.c
 
 .c.o :
 	$(CC) -c $(SRC)
