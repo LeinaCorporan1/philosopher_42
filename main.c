@@ -75,21 +75,11 @@ void	*journey(void *philosophers)
 	return (NULL);
 }
 
-int main(int ac, char **av)
+int	tr(t_philo *philo, t_stat data)
 {
-	t_stat data;
-	t_philo	*philo;
-
-	// data = NULL;
-	if (ac != 5 && ac != 6)
-		return (0);
-	if (init_stat(av, &data) == 0)
-		return (0);
-	if (init_philo(philo ,&data))
-	printf("done\n");
 	long long	i;
 	i = 0;
-
+		printf("thed id 0f philo before\n");
 	while (i < data.nb_philo)
 	{
 		printf("thed id 0f philo[%lld] = [%d]\n", i, philo[i].id);
@@ -116,5 +106,22 @@ int main(int ac, char **av)
 			return (0);
 		i ++;
 	}
+
+}
+
+int main(int ac, char **av)
+{
+	t_stat data;
+	t_philo	philo;
+
+	// data = NULL;
+	if (ac != 5 && ac != 6)
+		return (0);
+	if (init_stat(av, &data) == 0)
+		return (0);
+	if (init_philo(&philo ,&data))
+	printf("done\n");
+	tr(&philo, data);
 		return (1);
 }
+// je dois mettre la partie qui travail dans une autre fonction pour renvoyer l'addresse de philo

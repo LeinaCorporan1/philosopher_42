@@ -19,7 +19,7 @@
 
 int	init_philo(t_philo *philo, t_stat *data)
 {
-	int i;
+	long long i;
 
 	i = 0;
 	philo = malloc(sizeof(t_philo) * data->nb_philo + 1);
@@ -40,7 +40,7 @@ int	init_philo(t_philo *philo, t_stat *data)
 		// 	philo[i].r_fork = (i + 1) % nb_philo;
 		// else
 		// 	philo[i].r_fork = nb_philo;
-		printf("i = %d id %d \n",i , philo[i].id);
+		printf("i = %lld id %d \n",i , philo[i].id);
 		philo[i].data = data;
 		i++;
 	}
