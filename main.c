@@ -48,7 +48,7 @@ int	as_to_stop(t_philo *philosophers)
 
 	i = 0;
 	philo = (t_philo *)philosophers;
-	pthread_mutex_lock(&philo->data->eating);
+	// pthread_mutex_lock(&philo->data->eating);
 	if (philo->data->philo_died != 0)
 	{
 		printf("is philo died in as to stop\n");
@@ -60,7 +60,7 @@ int	as_to_stop(t_philo *philosophers)
 		printf("is all_ate in AS TO STOP\n");
 		i = 1;
 	}
-	pthread_mutex_lock(&philo->data->eating);
+	// pthread_mutex_lock(&philo->data->eating);
 	return (i);
 }
 
@@ -77,11 +77,14 @@ void	eating(void *philosophers)
 	print(time_phi(), philo, "has taken a fork");
 	print(time_phi(), philo, "is eating");
 	ft_usleep(philo->data->eat, philo->data->time_start);
+	pthread_mutex_lock(&philo->data->eating);
 	philo->last_meal = time_phi() - philo->data->time_start;
 	philo->as_eaten++;
 	// printf("as eatin %d = %d\n", philo->id, philo->as_eaten);
 	if (philo->as_eaten == philo->data->m_eat)
 		philo->data->all_ate++;
+	printf("aall eating %d = %lld as_eaten = %d meat= %lld\n", philo->id, philo->data->all_ate,philo->as_eaten, philo->data->m_eat);
+	pthread_mutex_unlock(&philo->data->eating);
 	// printf("aall eating %d = %lld\n", philo->id, philo->data->all_ate);
 	pthread_mutex_unlock(&philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
@@ -97,16 +100,17 @@ void	*routine(void *philosophers)
 	philo = (t_philo *)philosophers;
 	printf("inside of routine dead %lld\n", philo->data->philo_died);
 	while (!as_to_stop(philo))
-	{	
+	{
 		if (philo->data->philo_died != 0)
 			return (NULL);
 		eating(philo);
+	// printf("aall eating %d = %lld meat= %lld\n", philo->id, philo->data->all_ate, philo->data->m_eat);
 		if (as_to_stop(philo))
 		{
 			// printf ()
 			return (NULL);
 		}
-	printf("aall eating %d = %lld meat= %lld\n", philo->id, philo->data->all_ate, philo->data->m_eat);
+	// printf("aall eating %d = %lld meat= %lld\n", philo->id, philo->data->all_ate, philo->data->m_eat);
 		print(time_phi(), philo, "is sleeping");
 		ft_usleep(philo->data->sleep, philo->data->time_start);
 		print(time_phi(), philo, "is thinking");
