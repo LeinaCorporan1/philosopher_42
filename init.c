@@ -17,14 +17,17 @@
 // 	return (1);
 // }
 
-int	init_philo(t_philo *philo, t_stat *data)
+int	init_philo(t_philo **philosophers, t_stat *data)
 {
 	long long i;
+	t_philo	*philo;
 
 	i = 0;
+	philo = *philosophers;
 	philo = malloc(sizeof(t_philo) * data->nb_philo + 1);
 	if(!philo)
 		return (0);
+	printf("hellooooo\n");
 	while(i < data->nb_philo)
 	{
 		philo[i].id = i + 1;
@@ -44,6 +47,7 @@ int	init_philo(t_philo *philo, t_stat *data)
 		philo[i].data = data;
 		i++;
 	}
+	*philosophers = philo;
 	return (1);
 }
 

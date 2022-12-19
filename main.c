@@ -6,12 +6,12 @@ void	found_dead (t_philo *philosophers)
 	t_philo *philo;
 
 	philo = (t_philo *)philosophers;
-	printf("inside found dead\n");
+	// printf("inside found dead\n");
 	if ((time_phi() - philo->data->act_time) - philo->last_meal >= philo->data->die)
 	{
 		printf("FOUNDEEEDDD inside found dead\n");
 		pthread_mutex_lock(&philo->data->dead);
-		print(time_phi(), philo, "is dead");
+		print(time_phi(), philo, "died");
 		philo->is_dead = 1;
 		philo->data->philo_died = philo->id;
 		pthread_mutex_unlock(&philo->data->dead);
@@ -45,7 +45,7 @@ void	test(void *philosophers)
 
 	// printf("philo {%d} is taken right fork [%d]\n",philo-> id, philo->r_fork);
 	print(time_phi(), philo, "is eating");
-	ft_usleep(philo->data->eat);
+	ft_usleep(philo->data->eat, philo->data->act_time);
 	philo->last_meal = time_phi() - philo->data->act_time;
 	philo->as_eaten++;
 	pthread_mutex_unlock(&philo->l_fork);
@@ -68,9 +68,9 @@ void	*journey(void *philosophers)
 		if (philo->as_eaten == philo->data->m_eat)
 			return (NULL);
 		print(time_phi(), philo, "is sleeping");
-		ft_usleep(philo->data->sleep);
+		ft_usleep(philo->data->sleep, philo->data->act_time);
 		print(time_phi(), philo, "is thinking");
-		// printf("phlo[%i] as eaten %d\n",philo->id, philo->as_eaten);
+		printf("phlo[%i] as eaten %d\n",philo->id, philo->as_eaten);
 	}
 	return (NULL);
 }
@@ -79,14 +79,15 @@ int	tr(t_philo *philo, t_stat data)
 {
 	long long	i;
 	i = 0;
-		printf("thed id 0f philo before\n");
+		printf("thed id 0f philo before %lld\n", data.nb_philo);
 	while (i < data.nb_philo)
 	{
 		printf("thed id 0f philo[%lld] = [%d]\n", i, philo[i].id);
 		i++;
 	}
 	 i  = 0;
-	 data.act_time = time_phi();
+	 philo->data->act_time = time_phi();
+	 printf("data time = %lld\n", data.act_time);
 	while(i < data.nb_philo)
 	{
 		// pthread_mutex_init(&data.fork[i], NULL);
@@ -96,6 +97,7 @@ int	tr(t_philo *philo, t_stat data)
 		i ++;
 	}
 	printf("OUTSIIIDEE\n");
+	found_dead(philo);
 	if (data.philo_died != 0)
 		return (0);
 	i = 0;
@@ -112,7 +114,7 @@ int	tr(t_philo *philo, t_stat data)
 int main(int ac, char **av)
 {
 	t_stat data;
-	t_philo	philo;
+	t_philo	*philo;
 
 	// data = NULL;
 	if (ac != 5 && ac != 6)
@@ -120,8 +122,8 @@ int main(int ac, char **av)
 	if (init_stat(av, &data) == 0)
 		return (0);
 	if (init_philo(&philo ,&data))
-	printf("done\n");
-	tr(&philo, data);
+	printf("done data nb_philo %lld\n", data.nb_philo);
+	tr(philo, data);
 		return (1);
 }
 // je dois mettre la partie qui travail dans une autre fonction pour renvoyer l'addresse de philo

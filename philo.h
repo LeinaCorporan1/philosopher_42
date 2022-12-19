@@ -37,9 +37,9 @@ typedef struct s_stat
 
 
 int	init_stat(char **av, t_stat *data);
-int	init_philo(t_philo *philo, t_stat *data);
+int	init_philo(t_philo **philo, t_stat *data);
 
-void	ft_usleep(long long time_info);
+void	ft_usleep(long long time_info, long long begin);
 void	print(long long time, t_philo *philo, char *str);
 long long	time_phi(void);
 int	ft_atoi(const char *str);

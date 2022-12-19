@@ -46,25 +46,26 @@ long long	time_phi(void)
 	 return((time.tv_sec * 100) + (time.tv_usec / 1000));
 }
 
-void	ft_usleep(long long time_info)
+void	ft_usleep(long long time_info, long long begin)
 {
 	long long	start;
 	long long	i;
 
 	start = time_phi();
 	i = 0;
-	// printf("is usleep\n");
-	while ((i = time_phi())- start <= time_info)
+	// printf("is usleep %lld\n", time_phi() - begin);
+	while (( time_phi() - start) < time_info)
 	{
-		printf("timmee %lld start %lld\n",i,start);
 		usleep(time_info / 10);
 	}
+		// printf("timmee %lld start %lld\n",( time_phi() - start),time_info);
 
 }
 
 void	print(long long time, t_philo *philo, char *str)
 {
 	pthread_mutex_lock(&philo->data->print);
-	printf("%lli %d %s\n", time - philo->data->act_time, philo->id, str);
+	// printf("data -> act = % lld my time is %lld\n",philo->data->act_time, time);
+	printf("%lld %d %s\n",(time - philo->data->act_time) , philo->id, str);
 	pthread_mutex_unlock(&philo->data->print);
 }
