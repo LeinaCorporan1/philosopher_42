@@ -18,6 +18,7 @@ typedef	struct s_philo
 	long long	last_meal;
 	struct s_stat	*data;
 	pthread_t phi;
+	pthread_t died;
 } t_philo;
 
 typedef struct s_stat
@@ -28,10 +29,12 @@ typedef struct s_stat
 	long long	m_eat;
 	long long	die;
 	long long	philo_died;
-	long long	act_time;
+	long long	time_start;
+	long long	all_ate;
 	// t_philo	*philo;
 	// pthread_mutex_t	*fork;
 	pthread_mutex_t	dead;
+	pthread_mutex_t	eating;
 	pthread_mutex_t	print;
 }	t_stat;
 
@@ -43,4 +46,5 @@ void	ft_usleep(long long time_info, long long begin);
 void	print(long long time, t_philo *philo, char *str);
 long long	time_phi(void);
 int	ft_atoi(const char *str);
+void	*found (void *philosophers);
 #endif
