@@ -87,6 +87,7 @@ int	check_die_philo2(t_stat *data)
 	int	dead;
 
 	dead = -1;
+	printf("print in check die %lld\n",data->philo_died);
 	pthread_mutex_lock(&(data->dead));
 	dead = data->philo_died;
 	pthread_mutex_unlock(&(data->dead));
@@ -269,8 +270,8 @@ void	*routine(void *philosophers)
 		print(time_phi(), philo, "is sleeping",data);
 		ft_sleep(data->sleep, data);
 		print(time_phi(), philo, "is thinking",data);
-		usleep((data->die - (philo->last_meal -
-					time_phi()) - data ->eat) / 2);
+		// usleep((data->die - (philo->last_meal -
+		// 			time_phi()) - data ->eat) / 2);
 		i++;
 	}
 	return (NULL);
