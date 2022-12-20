@@ -1,20 +1,63 @@
 #include "philo.h"
 
-void	found_dead (t_philo *philosophers)
+void	found_dead (t_philo *philosophers, t_stat *data)
 {
 	long long last;
+	int i;
 	t_philo *philo;
 
 	philo = (t_philo *)philosophers;
-	if ((time_phi() - philo->data->time_start) - philo->last_meal >= philo->data->die)
-	{
-		// printf("FOUNDEEEDDD inside found dead\n");
-		pthread_mutex_lock(&philo->data->dead);
-		print(time_phi(), philo, "died");
-		philo->is_dead = 1;
-		philo->data->philo_died = philo->id;
-		pthread_mutex_unlock(&philo->data->dead);
-	}
+	i = -1;
+	printf("inside found dead begin\n");
+	// if (philo->data->all_ate != philo->data->nb_philo || philo->data->philo_died)
+	// 	return ;
+	printf("inside after found dead begin\n");
+
+	// while(!philo->data->philo_died)
+	// {
+	// 	ft_usleep(philo->data->die, 0);
+	// 	printf("die at = %lld and start %lld\n",philo->data->die, time_phi() - philo->data->time_start);
+
+	// 	if (philo->last_meal != -1 && (time_phi() - philo->data->time_start) - philo->last_meal >= philo->data->die)
+	// {
+
+	// 	pthread_mutex_lock(&philo->data->dead);
+	// 	print(time_phi(), philo, "died", 1);
+	// 	philo->is_dead = 1;
+	// 	philo->data->philo_died = philo->id;
+	// 	printf("FOUNDEEEDDD inside found dead  data-> died %lld id = %d\n", philo->data->philo_died, philo->id);
+	// 	pthread_mutex_unlock(&philo->data->dead);
+	// }
+		while(data->all_ate != data->nb_philo)
+		{
+			i = -1;
+			while (++i < data->nb_philo && !(data->philo_died))
+		{
+			// usleep(philo[i]->data)
+			printf("\033[0;32minside zhile for found dead\033[0m\n");
+			pthread_mutex_lock(&(philo[i].data->dead));
+			if ((philo[i].last_meal - time_phi()) > philo[i].data->die)
+			{
+				philo[i].is_dead = 1;
+
+				print( time_phi(),&philo[i], "died",philo[i].data);
+				philo[i].data->philo_died = 1;
+			}
+			pthread_mutex_unlock(&(philo[i].data->dead));
+			usleep(100);
+		}
+				if (data->philo_died)
+			break ;
+		i = 0;
+		while (data->m_eat != -1 && i < data->nb_philo && philo[i].as_eaten >= data->m_eat)
+			i++;
+		if (i == data->nb_philo)
+			data->all_ate = i;
+		}
+
+	// i++;
+	// }
+	// *philosophers = philo;
 }
 
 // void	*found (void *philosophers)
@@ -39,120 +82,248 @@ void	found_dead (t_philo *philosophers)
 // 	}
 // 	return (NULL);
 // }
-
-
-int	as_to_stop(t_philo *philosophers)
+int	check_die_philo2(t_stat *data)
 {
-		int i;
-	t_philo *philo;
+	int	dead;
 
-	i = 0;
-	philo = (t_philo *)philosophers;
-	// pthread_mutex_lock(&philo->data->eating);
-	if (philo->data->philo_died != 0)
-	{
-		printf("is philo died in as to stop\n");
-		i = 1;
+	dead = -1;
+	pthread_mutex_lock(&(data->dead));
+	dead = data->philo_died;
+	pthread_mutex_unlock(&(data->dead));
+	if (dead == 1)//voir si je met superieur a 1 ou egal
+		return (1);
+	return (0);
+}
 
-	}
-	if (philo->data->all_ate == philo->data->m_eat)
+int	mutex_dead(t_stat *data, t_philo *philo)
+{
+	print (time_phi(), data->philo, "died",data);
+	pthread_mutex_lock(&(data -> dead));
+	data -> philo_died = 1;
+	pthread_mutex_unlock(&(data -> dead));
+	return (1);
+}
+
+int	check_nb_eat(t_stat *data)
+{
+	int	i;
+
+	i = data -> nb_philo - 1;
+	if (data -> m_eat == -1)
+		return (0);
+	i = data -> nb_philo;
+	while (--i >= 0)
 	{
-		printf("is all_ate in AS TO STOP\n");
-		i = 1;
+		pthread_mutex_lock(&(data -> must_eat[i]));
+		if (data -> philo[i].x_eat < data->m_eat)
+		{
+			pthread_mutex_unlock(&(data->must_eat[i]));
+			return (0);
+		}
+		pthread_mutex_unlock(&(data->must_eat[i]));
 	}
-	// pthread_mutex_lock(&philo->data->eating);
-	return (i);
+	return (1);
+}
+
+int	mutex_all_eat(t_stat *data)
+{
+	pthread_mutex_lock(&(data->dead));
+	data->all_ate = 1;
+	pthread_mutex_unlock(&(data->dead));
+	return (1);
+}
+
+int	data_all_eat1(t_stat *data)
+{
+	if (check_nb_eat(data) == 1)
+		mutex_all_eat(data);
+	return (check_nb_eat(data));
+}
+
+int	check_data_died(t_stat *data)
+{
+	int	retour;
+
+	retour = 0;
+	pthread_mutex_lock(&(data -> dead));
+	retour = data ->philo_died;
+	pthread_mutex_unlock(&(data -> dead));
+	return (retour);
+}
+
+int	check_die_philo(t_stat *data)
+{
+	int	i;
+
+	i = data -> nb_philo;
+	while (--i > 0)
+		if (data->philo[i].is_dead == 1)
+			return (1);
+	return (0);
+}
+
+void	death_checker(t_stat *data, t_philo *philo)
+{
+	int	i;
+
+	while (check_nb_eat(data) == 0)
+	{
+		i = -1;
+		while (++i < data -> nb_philo && (check_die_philo(data) == 0))
+		{
+			pthread_mutex_lock(&(data -> eating));
+			if ((time_phi() - philo[i].last_meal) > data->die)
+				mutex_dead(data, &philo[i]);
+			pthread_mutex_unlock(&(data -> eating));
+			usleep(100);
+		}
+		if (check_data_died(data) == 1)
+			break ;
+		i = data_all_eat1(data);
+	}
 }
 
 void	eating(void *philosophers)
 {
+	t_stat	*data;
 	t_philo *philo;
 
 	philo = (t_philo *)philosophers;
-	if (philo->id % 2 == 0)
-		usleep(philo->data->eat/2);
-	pthread_mutex_lock(&philo->l_fork);
-	print(time_phi(), philo, "has taken a fork");
-	pthread_mutex_lock(philo->r_fork);
-	print(time_phi(), philo, "has taken a fork");
-	print(time_phi(), philo, "is eating");
-	ft_usleep(philo->data->eat, philo->data->time_start);
-	pthread_mutex_lock(&philo->data->eating);
-	philo->last_meal = time_phi() - philo->data->time_start;
-	philo->as_eaten++;
-	// printf("as eatin %d = %d\n", philo->id, philo->as_eaten);
-	if (philo->as_eaten == philo->data->m_eat)
-		philo->data->all_ate++;
-	printf("aall eating %d = %lld as_eaten = %d meat= %lld\n", philo->id, philo->data->all_ate,philo->as_eaten, philo->data->m_eat);
-	pthread_mutex_unlock(&philo->data->eating);
-	// printf("aall eating %d = %lld\n", philo->id, philo->data->all_ate);
-	pthread_mutex_unlock(&philo->l_fork);
-	pthread_mutex_unlock(philo->r_fork);
+	// if (philo->id % 2 == 0)
+	// 	usleep (1);
+	data = philo -> data;
+	pthread_mutex_lock((philo->r_fork));
+	print(time_phi(),philo, "has taken a fork",data);
+	pthread_mutex_lock(&(philo->l_fork));
+	print(time_phi(),philo, "has taken a fork",data);
+	pthread_mutex_lock(&(data -> eating));
+	print(time_phi(),philo, "is eating",data);
+	pthread_mutex_lock(&(data->must_eat[philo->id]));
+	philo -> last_meal = time_phi();
+	pthread_mutex_unlock(&(data->must_eat[philo->id]));
+	pthread_mutex_unlock(&(data -> eating));
+	ft_sleep(data->eat,data);
+	pthread_mutex_lock(&(data->must_eat[philo->id]));
+	philo->x_eat++;
+	pthread_mutex_unlock((philo->r_fork));
+	pthread_mutex_unlock(&(philo->l_fork));
+	pthread_mutex_unlock(&(data->must_eat[philo->id]));
+
+}
+
+void	pair_eating(void *philosophers)
+{
+	t_stat	*data;
+	t_philo *philo;
+
+	philo = (t_philo *)philosophers;
+	// if (philo->id % 2 == 0)
+	// 	usleep (1);
+	data = philo -> data;
+	pthread_mutex_lock(&(philo->l_fork));
+	print(time_phi(),philo, "has taken a fork",data);
+	pthread_mutex_lock((philo->r_fork));
+	print(time_phi(),philo, "has taken a fork",data);
+	pthread_mutex_lock(&(data -> eating));
+	print(time_phi(),philo, "is eating",data);
+	pthread_mutex_lock(&(data->must_eat[philo->id]));
+	philo -> last_meal = time_phi();
+	pthread_mutex_unlock(&(data->must_eat[philo->id]));
+	pthread_mutex_unlock(&(data->eating));
+	ft_sleep(data->eat,data);
+	pthread_mutex_lock(&(data->must_eat[philo->id]));
+	philo->x_eat++;
+	pthread_mutex_unlock(&(philo->l_fork));
+	pthread_mutex_unlock((philo->r_fork));
+	pthread_mutex_unlock(&(data->must_eat[philo->id]));
+
+}
+
+void	wich_eat(t_philo *philo)
+{
+	if (philo->data->nb_philo % 2 == 0)
+		pair_eating(philo);
+	else
+		eating(philo);
 
 }
 
 void	*routine(void *philosophers)
 {
-	long long i;
-	t_philo *philo;
+	int			i;
+	t_philo		*philo;
+	t_stat	*data;
 
 	i = 0;
 	philo = (t_philo *)philosophers;
-	printf("inside of routine dead %lld\n", philo->data->philo_died);
-	while (!as_to_stop(philo))
+	data = philo->data;
+	if (philo -> id % 2 == 0)
+		usleep(100);
+	while (check_die_philo2(data) == 0)
 	{
-		if (philo->data->philo_died != 0)
-			return (NULL);
-		eating(philo);
-	// printf("aall eating %d = %lld meat= %lld\n", philo->id, philo->data->all_ate, philo->data->m_eat);
-		if (as_to_stop(philo))
+		wich_eat(philo);
+		if (check_nb_eat(data) == 1)
 		{
-			// printf ()
-			return (NULL);
+			break ;
 		}
-	// printf("aall eating %d = %lld meat= %lld\n", philo->id, philo->data->all_ate, philo->data->m_eat);
-		print(time_phi(), philo, "is sleeping");
-		ft_usleep(philo->data->sleep, philo->data->time_start);
-		print(time_phi(), philo, "is thinking");
+		print(time_phi(), philo, "is sleeping",data);
+		ft_sleep(data->sleep, data);
+		print(time_phi(), philo, "is thinking",data);
+		usleep((data->die - (philo->last_meal -
+					time_phi()) - data ->eat) / 2);
+		i++;
 	}
-		if (pthread_join(philo->died,NULL) != 0)
-			return (0);
-
 	return (NULL);
 }
 
-int	tr(t_philo *philo, t_stat data)
+void	finish_all_mutex(t_stat *data, t_philo *philo)
 {
-	long long	i;
-	i = 0;
-	// 	printf("thed id 0f philo before %lld\n", data.nb_philo);
-	// while (i < data.nb_philo)
-	// {
-	// 	printf("thed id 0f philo[%lld] = [%d]\n", i, philo[i].id);
-	// 	i++;
-	// }
-	//  i  = 0;
-	 philo->data->time_start = time_phi();
-	 printf("data time = %lld\n", data.time_start);
-	while(i < data.nb_philo)
-	{
-		printf("is inside\n");
-		if (pthread_create(&philo[i].phi,NULL, &routine, &philo[i]) != 0)
-			return (0);
-		i ++;
-	}
-	// while(!data.philo_died)
-	// {
-	// 	found_dead(philo);
-	// }
-	i = 0;
-	while(i < data.nb_philo)
-	{
-		if (pthread_join(philo[i].phi,NULL) != 0)
-			return (0);
-		i ++;
-	}
+	int	i;
 
+	i = data -> nb_philo;
+	while (--i >= 0)
+	{
+		pthread_join(philo[i].phi, NULL);
+	}
+}
+
+void	exit_mutex(t_stat *data)
+{
+	int	i;
+
+	i =data -> nb_philo;
+	while (--i >= 0)
+	{
+		pthread_mutex_destroy(&(data->must_eat[i]));
+	}
+	i =data -> nb_philo;
+	free (data ->must_eat);
+}
+
+int	do_pthread(t_stat *data)
+{
+	int		i;
+	t_philo	*philo;
+
+	i = 0;
+	philo = data -> philo;
+	data -> time_start = time_phi();
+	while (i < data -> nb_philo)
+	{
+		if (pthread_create(&(philo[i].phi), NULL,routine, &(philo[i])))
+		{
+			// ft_error("Error");
+			exit (1);
+		}
+		pthread_mutex_lock(&(data->must_eat[i]));
+		philo[i].last_meal = time_phi();
+		pthread_mutex_unlock(&(data->must_eat[i]));
+		i++;
+	}
+	death_checker( data, data->philo);
+	finish_all_mutex(data, philo);
+	exit_mutex(data);
+	return (0);
 }
 
 int main(int ac, char **av)
@@ -167,7 +338,7 @@ int main(int ac, char **av)
 		return (0);
 	if (init_philo(&philo ,&data))
 	printf("done data nb_philo %lld\n", data.nb_philo);
-	tr(philo, data);
+	do_pthread(&data);
 		return (1);
 }
-// je dois mettre la partie qui travail dans une autre fonction pour renvoyer l'addresse de philo
+//je dois checker pk ca marche pas avec ./philo 4 2147483647 200 200 et aussi si il y a que 1

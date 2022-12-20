@@ -56,10 +56,42 @@ void	ft_usleep(long long time_info, long long begin)
 	}
 }
 
-void	print(long long time, t_philo *philo, char *str)
+void	print(long long time, t_philo *philo, char *str, t_stat *data)
 {
+	// if (dead == 1)
+		// pthread_mutex_lock(&philo->data->finish);
 	pthread_mutex_lock(&philo->data->print);
-	// printf("data -> act = % lld my time is %lld\n",philo->data->time_start, time);
-	printf("%lld %d %s\n",(time - philo->data->time_start) , philo->id, str);
+	if (check_die_philo2(data) == 0)
+	{
+		// printf("data -> act = % lld my time is %lld\n",philo->data->time_start, time);
+		printf("%lld %d %s\n",(time - philo->data->time_start) , philo->id, str);
+	}
 	pthread_mutex_unlock(&philo->data->print);
+	// if (dead == 2)
+	// pthread_mutex_unlock(&philo->data->finish);
+
 }
+void	ft_sleep(long long time_to, t_stat *data)
+{
+	long long	begin_sleep;
+
+	begin_sleep = time_phi();
+	while ((check_die_philo(data)) == 0)
+	{
+		if ((time_phi() - begin_sleep) >= time_to)
+			break ;
+		usleep(50);
+	}
+}
+// void	print(t_stat *data, int numero_philo, char *str)
+// {
+// 	pthread_mutex_lock(&(data->print));
+// 	if (check_die_philo2(data) == 0)
+// 	{
+// 		printf ("%lli ", (time_phi() - data ->time_start));
+// 		printf ("%i ", numero_philo + 1);
+// 		printf ("%s\n", str);
+// 	}
+// 	pthread_mutex_unlock(&(data->print));
+// 	return ;
+// }
