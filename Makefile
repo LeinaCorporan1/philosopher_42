@@ -5,7 +5,9 @@ FLAGS	=-Wall -g3 -Wextra -Werror -pthread
 
 SRC = main.c \
 	init.c \
-	utils.c
+	utils.c \
+	error.c \
+	routine.c
 
 .c.o :
 	$(CC) -c $(SRC)

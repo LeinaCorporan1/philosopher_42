@@ -1,19 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalnum.c                                       :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcorpora <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/22 17:57:44 by lcorpora          #+#    #+#             */
-/*   Updated: 2021/12/21 17:17:43 by lcorpora         ###   ########.fr       */
+/*   Created: 2022/12/21 12:50:02 by lcorpora          #+#    #+#             */
+/*   Updated: 2022/12/21 12:50:03 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "libft.h"
 
-int	ft_isalnum(int c)
+
+ 
+#include "philo.h"
+
+void	ft_error(char *str)
 {
-	if ((c >= 48 && c <= 57) || (c >= 97 && c <= 122) || (c >= 65 && c <= 90))
-		return (1);
-	return (0);
+	
+	printf("ERROR : ");
+	printf("%s", str);
 }
