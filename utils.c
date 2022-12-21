@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:50:22 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 13:28:42 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/21 17:06:04 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,22 +52,18 @@ long long	time_phi(void)
 
 	if (gettimeofday(&time, NULL) == -1)
 		return (-1);
-	 return((time.tv_sec * 100) + (time.tv_usec / 1000));
+	 return((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
 void	print(long long time, t_philo *philo, char *str, t_stat *data)
 {
-	// if (dead == 1)
-		// pthread_mutex_lock(&philo->data->finish);
+
 	pthread_mutex_lock(&philo->data->print);
-	if (check_die_philo2(data) == 0)
+	if (check_data_died(data) == 0)
 	{
-		// printf("data -> act = % lld my time is %lld\n",philo->data->time_start, time);
 		printf("%lld %d %s\n",(time - philo->data->time_start) , philo->id, str);
 	}
 	pthread_mutex_unlock(&philo->data->print);
-	// if (dead == 2)
-	// pthread_mutex_unlock(&philo->data->finish);
 
 }
 void	ft_sleep(long long time_to, t_stat *data)
@@ -75,7 +71,7 @@ void	ft_sleep(long long time_to, t_stat *data)
 	long long	begin_sleep;
 
 	begin_sleep = time_phi();
-	while ((check_die_philo2(data)) == 0)
+	while (((check_die_philo(data)) == 0))
 	{
 		if ((time_phi() - begin_sleep) >= time_to)
 			break ;

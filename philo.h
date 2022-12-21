@@ -11,6 +11,7 @@
 typedef	struct s_philo
 {
 	pthread_mutex_t	*r_fork;
+	int	l_fork_taken;
 	pthread_mutex_t	l_fork;
 	int	id;
 	int	is_dead;
@@ -49,7 +50,7 @@ void	ft_usleep(long long time_info, long long begin);
 void	print(long long time, t_philo *philo, char *str, t_stat *data);
 long long	time_phi(void);
 int	ft_atoi(const char *str);
-int	check_die_philo2(t_stat *data);
+int	check_data_died(t_stat *data);
 void	*found (void *philosophers);
 void	ft_sleep(long long time_to, t_stat *data);
 int	check_die_philo(t_stat *data);
@@ -58,4 +59,10 @@ void	*routine(void *philosophers);
 int	check_nb_eat(t_stat *data);
 void	finish_all_mutex(t_stat *data, t_philo *philo);
 void	exit_mutex(t_stat *data);
+void	*one_phi(void *philosopher);
+int	check_args(char **av, int ac);
+void	death_checker(t_stat *data, t_philo *philo);
+int	data_all_eat1(t_stat *data);
+void	exit_mutex(t_stat *data);
+int	mutex_dead(t_stat *data, t_philo *philo);
 #endif

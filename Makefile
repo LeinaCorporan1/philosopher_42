@@ -1,13 +1,16 @@
 NAME	=	philo
 
 CC	=	gcc
-FLAGS	=-Wall -g3 -Wextra -Werror -pthread
+FLAGS	= -Wall -Wextra -Werror -pthread -g3 -fsanitize=thread
 
 SRC = main.c \
 	init.c \
 	utils.c \
 	error.c \
-	routine.c
+	routine.c \
+	exit.c \
+	death_checker.c \
+	checker_args.c
 
 .c.o :
 	$(CC) -c $(SRC)
