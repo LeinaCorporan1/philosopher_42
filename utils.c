@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:50:22 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 12:50:24 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/21 13:28:42 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,19 +55,6 @@ long long	time_phi(void)
 	 return((time.tv_sec * 100) + (time.tv_usec / 1000));
 }
 
-void	ft_usleep(long long time_info, long long begin)
-{
-	long long	start;
-	long long	i;
-
-	start = time_phi();
-	i = 0;
-	while (( time_phi() - start) < time_info)
-	{
-		usleep(time_info / 10);
-	}
-}
-
 void	print(long long time, t_philo *philo, char *str, t_stat *data)
 {
 	// if (dead == 1)
@@ -88,22 +75,10 @@ void	ft_sleep(long long time_to, t_stat *data)
 	long long	begin_sleep;
 
 	begin_sleep = time_phi();
-	while ((check_die_philo(data)) == 0)
+	while ((check_die_philo2(data)) == 0)
 	{
 		if ((time_phi() - begin_sleep) >= time_to)
 			break ;
 		usleep(50);
 	}
 }
-// void	print(t_stat *data, int numero_philo, char *str)
-// {
-// 	pthread_mutex_lock(&(data->print));
-// 	if (check_die_philo2(data) == 0)
-// 	{
-// 		printf ("%lli ", (time_phi() - data ->time_start));
-// 		printf ("%i ", numero_philo + 1);
-// 		printf ("%s\n", str);
-// 	}
-// 	pthread_mutex_unlock(&(data->print));
-// 	return ;
-// }

@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:32:04 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 12:52:59 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/21 13:23:13 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,8 @@ void	death_checker(t_stat *data, t_philo *philo)
 		}
 		if (check_data_died(data) == 1)
 		{
-			// finish_all_mutex(data, philo);
-			// exit_mutex(data);
+			finish_all_mutex(data, philo);
+			exit_mutex(data);
 			break ;
 			// exit(1) ;
 		}
@@ -127,6 +127,7 @@ void	finish_all_mutex(t_stat *data, t_philo *philo)
 	while (--i >= 0)
 	{
 		pthread_join(philo[i].phi, NULL);
+		pthread_mutex_destroy(&(philo[i].l_fork));
 	}
 }
 
