@@ -6,17 +6,14 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:50:02 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 12:50:03 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/21 18:58:57 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
- 
 #include "philo.h"
 
 void	ft_error(char *str)
 {
-	
-	printf("ERROR : ");
-	printf("%s", str);
+	write(2, "ERROR : ", 8);
+	write(2, str, ft_strlen(str));
 }

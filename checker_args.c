@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:06:15 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 14:06:16 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/21 18:53:03 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,19 @@ int	ft_isdigit(int c)
 
 int	check_args(char **av, int ac)
 {
-	int i;
-	int y;
-	int rtn;
+	int	i;
+	int	y;
+	int	rtn;
 
 	i = 1;
 	rtn = 0;
-	while(av[i])
+	while (av[i])
 	{
-		if (ft_strlen(av[i]) > 10 || ft_atoi(av[i]) < 0 || ft_atoi(av[i]) > INT_MAX)
+		if (ft_strlen(av[i]) > 10 || ft_atoi(av[i]) < 0
+			|| ft_atoi(av[i]) > INT_MAX)
 			rtn = 1;
 		y = 0;
-		while(av[i][y])
+		while (av[i][y])
 		{
 			if (!ft_isdigit(av[i][y]))
 				rtn = 1;

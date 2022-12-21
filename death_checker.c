@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:06:10 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 16:46:37 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/21 22:14:03 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 int	mutex_dead(t_stat *data, t_philo *philo)
 {
-	print (time_phi(), data->philo, "died",data);
+	print (time_phi(), data->philo, "died", data);
 	pthread_mutex_lock(&(data->dead));
 	data -> philo_died = 1;
 	pthread_mutex_unlock(&(data->dead));
@@ -38,9 +38,11 @@ int	check_data_died(t_stat *data)
 {
 	int	retour;
 
-	retour = -1;
+	
 	pthread_mutex_lock(&(data -> dead));
-	retour = data ->philo_died;
+	// if (data_all_eat(data) == )
+	retour = 0;
+	retour = data->philo_died;
 	pthread_mutex_unlock(&(data -> dead));
 	return (retour);
 }
@@ -60,9 +62,12 @@ void	death_checker(t_stat *data, t_philo *philo)
 {
 	int	i;
 
-	while (check_nb_eat(data) == 0)
+	
+	while (check_nb_eat(data) == 0 && check_data_died(data) == 0)
 	{
 		i = -1;
+		// usleep(1500);
+
 		while (++i < data -> nb_philo && (check_die_philo(data) == 0))
 		{
 			pthread_mutex_lock(&(data -> eating));
@@ -73,10 +78,9 @@ void	death_checker(t_stat *data, t_philo *philo)
 		}
 		if (check_data_died(data) == 1)
 		{
-			// finish_all_mutex(data, philo);
-			// exit_mutex(data);
 			break ;
 		}
 		i = data_all_eat1(data);
+		//usleep(300);
 	}
 }
