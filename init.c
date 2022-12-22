@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:06:28 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 21:08:31 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/22 04:21:46 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@ int	init_philo(t_philo *philosophers, t_stat *data)
 	{
 		philo[i].id = i + 1;
 		philo[i].is_dead = 0;
-		philo[i].last_meal = 0;
-		philo[i].as_eaten = 0;
+		philo[i].last_meal = time_phi();
 		philo[i].x_eat = 0;
 		philo[i].all_eat = 0;
-		pthread_mutex_init(&philo[i].l_fork, NULL);
-		philo[i].r_fork = &philo[(i + 1) % data->nb_philo].l_fork;
-		// printf("i = %d  left = {%lld} right {%lld}\n",philo[i].id, i, (i + 1) % data->nb_philo);
+		philo[i].l_fork = i;
+		philo[i].r_fork = (i + 1) % data->nb_philo;
+		if (pthread_mutex_init(&philo[i].m_philo, NULL) != 0)
+			return (ft_error("Error\n"), 0);
 		philo[i].data = data;
 		i++;
 	}
@@ -43,13 +43,14 @@ void	init_must(t_stat *data)
 {
 	int	i;
 	int	init_mutex;
+	int	init_fork;
 
 	i = data -> nb_philo;
 	init_mutex = 0;
-	data -> must_eat = malloc(sizeof(pthread_mutex_t) * data->nb_philo);
+	init_fork = 0;
 	while (--i >= 0)
 	{
-		init_mutex = pthread_mutex_init(&(data -> must_eat[i]), NULL);
+		init_fork = pthread_mutex_init(&(data -> fork[i]), NULL);
 		if (init_mutex != 0)
 		{
 			ft_error("Error d'initialisation mutex");
@@ -70,17 +71,14 @@ int	init_stat(char **av, t_stat *data)
 		data->m_eat = ft_atoi(av[5]);
 	data->philo_died = 0;
 	data->all_ate = 0;
-	if (data->nb_philo == 0 || data->m_eat == 0)
+	if (data->nb_philo == 0 || data->m_eat == 0 || data->die == 0)
 		return (0);
 	init_must(data);
 	if (pthread_mutex_init(&data->print, NULL))
 		return (0);
-	if (pthread_mutex_init(&data->eating, NULL))
-		return (0);
 	if (pthread_mutex_init(&data->dead, NULL))
 		return (0);
-	if (pthread_mutex_init(&data->finish, NULL))
+	if (init_philo(data->philo, data) == 0)
 		return (0);
-	init_philo(data->philo, data);
 	return (1);
 }

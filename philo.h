@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 19:03:42 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 22:11:24 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/22 03:38:28 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,16 @@
 
 typedef struct s_philo
 {
-	pthread_mutex_t	*r_fork;
-	int				l_fork_taken;
-	pthread_mutex_t	l_fork;
+	int				r_fork;
+	int				l_fork;
 	int				id;
 	int				is_dead;
-	int				as_eaten;
 	long long		last_meal;
 	long long		x_eat;
 	long long		all_eat;
 	struct s_stat	*data;
+	pthread_mutex_t	m_philo;
 	pthread_t		phi;
-	pthread_t		died;
 }	t_philo;
 
 typedef struct s_stat
@@ -47,11 +45,9 @@ typedef struct s_stat
 	long long		time_start;
 	long long		all_ate;
 	t_philo			philo[200];
-	pthread_mutex_t	*must_eat;
+	pthread_mutex_t	fork[200];
 	pthread_mutex_t	dead;
-	pthread_mutex_t	eating;
 	pthread_mutex_t	print;
-	pthread_mutex_t	finish;
 }	t_stat;
 
 int			init_stat(char **av, t_stat *data);
@@ -69,7 +65,6 @@ void		*routine(void *philosophers);
 int			check_nb_eat(t_stat *data);
 void		finish_all_mutex(t_stat *data, t_philo *philo);
 void		exit_mutex(t_stat *data);
-void		*one_phi(void *philosopher);
 int			check_args(char **av, int ac);
 void		death_checker(t_stat *data, t_philo *philo);
 int			data_all_eat1(t_stat *data);

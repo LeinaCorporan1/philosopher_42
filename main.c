@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:32:04 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 22:16:45 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/22 03:55:26 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,46 +32,46 @@ int	check_nb_eat(t_stat *data)
 	int	i;
 
 	i = data->nb_philo - 1;
+	pthread_mutex_lock(&(data->dead));
 	if (data->philo_died == 1)
+	{	
+		pthread_mutex_unlock(&(data->dead));
 		return (1);
+	}
+	pthread_mutex_unlock(&(data->dead));
 	if (data->m_eat == -1)
 		return (0);
 	i = data->nb_philo;
 	while (--i >= 0)
 	{
-		pthread_mutex_lock(&(data->must_eat[i]));
+		pthread_mutex_lock(&(data->philo[i].m_philo));
 		if (data->philo[i].x_eat < data->m_eat)
 		{
-			pthread_mutex_unlock(&(data->must_eat[i]));
+			pthread_mutex_unlock(&(data->philo[i].m_philo));
 			return (0);
 		}
-		pthread_mutex_unlock(&(data->must_eat[i]));
+		pthread_mutex_unlock(&(data->philo[i].m_philo));
 	}
+	mutex_all_eat(data);
 	return (1);
 }
 
 int	do_pthread(t_stat *data)
 {
-	int		i;
-	t_philo	*philo;
+	int	i;
 
 	i = 0;
-	philo = data->philo;
 	data->time_start = time_phi();
 	while (i < data->nb_philo)
 	{
-		if (pthread_create (&(philo[i].phi), NULL, routine, &(philo[i])))
-		{
-			ft_error("Error with creating a thread");
-			return (0);
-		}
-		pthread_mutex_lock(&(data->must_eat[i]));
-		philo[i].last_meal = time_phi();
-		pthread_mutex_unlock(&(data->must_eat[i]));
+		data->philo->last_meal = data->time_start;
+		if (pthread_create (&(data->philo[i].phi), NULL,
+				routine, &(data->philo[i])))
+			return (ft_error("Error with creating a thread"), 0);
 		i++;
 	}
 	death_checker(data, data->philo);
-	finish_all_mutex(data, philo);
+	finish_all_mutex(data, data->philo);
 	exit_mutex(data);
 	return (0);
 }
@@ -92,9 +92,6 @@ int	main(int ac, char **av)
 		ft_error("imposible to initialize data\n");
 		return (0);
 	}
-	if (data.nb_philo == 1)
-		one_phi(data.philo);
-	else
-		do_pthread(&data);
+	do_pthread(&data);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:50:22 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 20:19:02 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/22 04:16:42 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ void	ft_sleep(long long time_to, t_stat *data)
 	long long	begin_sleep;
 
 	begin_sleep = time_phi();
-	while (((check_data_died(data)) == 0))
+	while (check_data_died(data) == 0)
 	{
+		usleep(100);
 		if ((time_phi() - begin_sleep) >= time_to)
 			break ;
-		usleep(50);
 	}
 }

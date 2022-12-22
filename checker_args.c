@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:06:15 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/21 18:53:03 by lcorpora         ###   ########.fr       */
+/*   Updated: 2022/12/22 03:22:39 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	check_args(char **av, int ac)
 			if (!ft_isdigit(av[i][y]))
 				rtn = 1;
 			if (rtn == 1)
-				ft_error("Invalid arguments\n");
+				return (ft_error("Invalid arguments\n"), 1);
 			y++;
 		}
 		i++;
