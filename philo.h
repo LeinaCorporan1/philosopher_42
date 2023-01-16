@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 19:03:42 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/22 03:38:28 by lcorpora         ###   ########.fr       */
+/*   Updated: 2023/01/16 17:49:15 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,14 @@ typedef struct s_stat
 
 int			init_stat(char **av, t_stat *data);
 int			init_philo(t_philo *philo, t_stat *data);
-void		ft_usleep(long long time_info, long long begin);
+// void		ft_usleep(long long time_info, long long begin);
+void ft_sleep(long int time_in_ms);
 void		print(long long time, t_philo *philo, char *str, t_stat *data);
 long long	time_phi(void);
 int			ft_atoi(const char *str);
 int			check_data_died(t_stat *data);
 void		*found(void *philosophers);
-void		ft_sleep(long long time_to, t_stat *data);
+// void		ft_sleep(long long time_to, t_stat *data);
 int			check_die_philo(t_stat *data);
 void		ft_error(char *str);
 void		*routine(void *philosophers);
@@ -71,4 +72,5 @@ int			data_all_eat1(t_stat *data);
 void		exit_mutex(t_stat *data);
 int			mutex_dead(t_stat *data, t_philo *philo);
 size_t		ft_strlen(char *c);
+long long	time_phi_dif(long long	x);
 #endif

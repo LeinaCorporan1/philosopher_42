@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:06:28 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/22 04:21:46 by lcorpora         ###   ########.fr       */
+/*   Updated: 2023/01/16 17:30:26 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	init_philo(t_philo *philosophers, t_stat *data)
 	{
 		philo[i].id = i + 1;
 		philo[i].is_dead = 0;
-		philo[i].last_meal = time_phi();
+		philo[i].last_meal = 0;
 		philo[i].x_eat = 0;
 		philo[i].all_eat = 0;
 		philo[i].l_fork = i;
@@ -39,23 +39,22 @@ int	init_philo(t_philo *philosophers, t_stat *data)
 	return (1);
 }
 
-void	init_must(t_stat *data)
+int	init_must(t_stat *data)
 {
 	int	i;
-	int	init_mutex;
 	int	init_fork;
 
 	i = data -> nb_philo;
-	init_mutex = 0;
 	init_fork = 0;
 	while (--i >= 0)
 	{
 		init_fork = pthread_mutex_init(&(data -> fork[i]), NULL);
-		if (init_mutex != 0)
+		if (init_fork != 0)
 		{
-			ft_error("Error d'initialisation mutex");
+			return (ft_error("Error d'initialisation mutex"), 0);
 		}
 	}
+	return (1);
 }
 
 int	init_stat(char **av, t_stat *data)
@@ -73,7 +72,8 @@ int	init_stat(char **av, t_stat *data)
 	data->all_ate = 0;
 	if (data->nb_philo == 0 || data->m_eat == 0 || data->die == 0)
 		return (0);
-	init_must(data);
+	if (init_must(data) == 0)
+		return (0);
 	if (pthread_mutex_init(&data->print, NULL))
 		return (0);
 	if (pthread_mutex_init(&data->dead, NULL))

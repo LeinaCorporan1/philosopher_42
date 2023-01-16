@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:32:04 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/22 03:55:26 by lcorpora         ###   ########.fr       */
+/*   Updated: 2023/01/16 18:18:41 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,28 @@ int	check_nb_eat(t_stat *data)
 	return (1);
 }
 
+int	do_pthread_odd(t_stat *data)
+{
+	int	i;
+
+	i = 0;
+	
+	while (i < data->nb_philo)
+	{
+		data->philo[i].last_meal = time_phi();
+		if (data->philo[i].id % 2 == 0)
+		{
+			if (pthread_create (&(data->philo[i].phi), NULL,
+					routine, &(data->philo[i])))
+				return (ft_error("Error with creating a thread"), 0);
+		}
+		i++;
+	}
+	// death_checker(data, data->philo);
+	finish_all_mutex(data, data->philo);
+	exit_mutex(data);
+}
+
 int	do_pthread(t_stat *data)
 {
 	int	i;
@@ -64,17 +86,57 @@ int	do_pthread(t_stat *data)
 	data->time_start = time_phi();
 	while (i < data->nb_philo)
 	{
-		data->philo->last_meal = data->time_start;
-		if (pthread_create (&(data->philo[i].phi), NULL,
-				routine, &(data->philo[i])))
-			return (ft_error("Error with creating a thread"), 0);
+		// print(time_phi(), &data->philo[i], "BEFORE THREADDDD", data);
+	// data->time_start = time_phi();
+		data->philo[i].last_meal = time_phi();
+		if (data->philo[i].id % 2 != 0)
+		{
+			if (pthread_create (&(data->philo[i].phi), NULL,
+					routine, &(data->philo[i])))
+				return (ft_error("Error with creating a thread"), 0);
+		}
 		i++;
 	}
-	death_checker(data, data->philo);
-	finish_all_mutex(data, data->philo);
-	exit_mutex(data);
-	return (0);
+	// ft_sleep(1);
 }
+
+// int	do_pthread(t_stat *data)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	data->time_start = time_phi();
+// 	while (i < data->nb_philo)
+// 	{
+// 		// print(time_phi(), &data->philo[i], "BEFORE THREADDDD", data);
+// 	// data->time_start = time_phi();
+// 		data->philo[i].last_meal = time_phi();
+// 		// if (data->philo[i].id % 2 == 0)
+// 		// {
+// 			if (pthread_create (&(data->philo[i].phi), NULL,
+// 					routine, &(data->philo[i])))
+// 				return (ft_error("Error with creating a thread"), 0);
+// 		// }
+// 		i++;
+// 	}
+// 	// i = 0;
+// 	// while (i < data->nb_philo)
+// 	// {
+// 	// 	print(time_phi(), &data->philo[i], "BEFORE THREADDDD", data);
+// 	// data->time_start = time_phi();
+// 	// 	if (data->philo[i].id % 2 != 0)
+// 	// 	{
+// 	// 		if (pthread_create (&(data->philo[i].phi), NULL,
+// 	// 				routine, &(data->philo[i])))
+// 	// 			return (ft_error("Error with creating a thread"), 0);
+// 	// 	}
+// 	// 	i++;
+// 	// }
+// 	death_checker(data, data->philo);
+// 	finish_all_mutex(data, data->philo);
+// 	exit_mutex(data);
+// 	return (0);
+// }
 
 int	main(int ac, char **av)
 {
@@ -93,5 +155,6 @@ int	main(int ac, char **av)
 		return (0);
 	}
 	do_pthread(&data);
+	do_pthread_odd(&data);
 	return (1);
 }

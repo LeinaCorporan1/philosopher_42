@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:50:22 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/22 04:16:42 by lcorpora         ###   ########.fr       */
+/*   Updated: 2023/01/16 17:55:06 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,33 @@ int	ft_atoi(const char *str)
 
 long long	time_phi(void)
 {
+	// struct timeval	time;
+	// long long		i;
+
+	// if (gettimeofday(&time, NULL) == -1)
+	// 	return (-1);
+	// return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+
+ long int time;
+ struct timeval current_time;
+
+ time = 0;
+ if (gettimeofday(&current_time, NULL) == -1)
+  return (-1);
+ time = (current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
+ return (time);
+}
+
+long long	time_phi_dif(long long x)
+{
 	struct timeval	time;
 	long long		i;
 
 	if (gettimeofday(&time, NULL) == -1)
 		return (-1);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	i = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	// return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	return (i - x);
 }
 
 void	print(long long time, t_philo *philo, char *str, t_stat *data)
@@ -65,15 +86,26 @@ void	print(long long time, t_philo *philo, char *str, t_stat *data)
 	pthread_mutex_unlock(&philo->data->print);
 }
 
-void	ft_sleep(long long time_to, t_stat *data)
-{
-	long long	begin_sleep;
+// void	ft_sleep(long long time_to, t_stat *data)
+// {
+// 	long long	begin_sleep;
 
-	begin_sleep = time_phi();
-	while (check_data_died(data) == 0)
-	{
-		usleep(100);
-		if ((time_phi() - begin_sleep) >= time_to)
-			break ;
-	}
+// 	begin_sleep = time_phi_dif(0);
+// 	// begin_sleep = time_phi();
+// 	while (check_data_died(data) == 0 && (time_phi_dif(begin_sleep)) < time_to)
+// 	{
+// 		// usleep(50);
+// 		if ((time_phi() - begin_sleep) >= time_to)
+// 			break ;
+// 	}
+// }
+
+void ft_sleep(long int time_in_ms)
+{
+	long int	start_time;
+
+	start_time = 0;
+	start_time = time_phi();
+	while ((time_phi() - start_time) < time_in_ms)
+		usleep(time_in_ms / 10);
 }

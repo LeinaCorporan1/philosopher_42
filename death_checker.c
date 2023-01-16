@@ -6,7 +6,7 @@
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:06:10 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/22 04:13:04 by lcorpora         ###   ########.fr       */
+/*   Updated: 2023/01/16 17:38:07 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,20 @@ int	check_data_died(t_stat *data)
 void	death_checker(t_stat *data, t_philo *philo)
 {
 	int	i;
-	
-	usleep(5000);
+
+	// usleep(5000);
 	while (check_nb_eat(data) == 0)
 	{
 		i = -1;
 		while (++i < data -> nb_philo)
 		{
 			if ((time_phi() - philo[i].last_meal) > data->die)
+			{
+				// printf("time = %lld  last meal == %lld \n", time_phi() - philo[i].last_meal, philo[i].last_meal);
 				mutex_dead(data, &philo[i]);
-			usleep(100);
+				break ;
+			}
 		}
+		// usleep(100);
 	}
 }
