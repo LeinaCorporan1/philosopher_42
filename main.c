@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
+/*   By: corporan <corporan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:32:04 by lcorpora          #+#    #+#             */
-/*   Updated: 2023/01/16 18:18:41 by lcorpora         ###   ########.fr       */
+/*   Updated: 2023/01/18 02:41:32 by corporan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int	mutex_all_eat(t_stat *data)
 {
-	pthread_mutex_lock(&(data->dead));
+	// pthread_mutex_lock(&(data->dead));
 	data->all_ate = 1;
-	pthread_mutex_unlock(&(data->dead));
+	// pthread_mutex_unlock(&(data->dead));
 	return (1);
 }
 
@@ -34,7 +34,7 @@ int	check_nb_eat(t_stat *data)
 	i = data->nb_philo - 1;
 	pthread_mutex_lock(&(data->dead));
 	if (data->philo_died == 1)
-	{	
+	{
 		pthread_mutex_unlock(&(data->dead));
 		return (1);
 	}
@@ -44,13 +44,13 @@ int	check_nb_eat(t_stat *data)
 	i = data->nb_philo;
 	while (--i >= 0)
 	{
-		pthread_mutex_lock(&(data->philo[i].m_philo));
+		// pthread_mutex_lock(&(data->philo[i].m_philo));
 		if (data->philo[i].x_eat < data->m_eat)
 		{
-			pthread_mutex_unlock(&(data->philo[i].m_philo));
+			// pthread_mutex_unlock(&(data->philo[i].m_philo));
 			return (0);
 		}
-		pthread_mutex_unlock(&(data->philo[i].m_philo));
+		// pthread_mutex_unlock(&(data->philo[i].m_philo));
 	}
 	mutex_all_eat(data);
 	return (1);
@@ -59,84 +59,27 @@ int	check_nb_eat(t_stat *data)
 int	do_pthread_odd(t_stat *data)
 {
 	int	i;
+	pthread_t	*phi;
 
 	i = 0;
-	
-	while (i < data->nb_philo)
-	{
-		data->philo[i].last_meal = time_phi();
-		if (data->philo[i].id % 2 == 0)
-		{
-			if (pthread_create (&(data->philo[i].phi), NULL,
-					routine, &(data->philo[i])))
-				return (ft_error("Error with creating a thread"), 0);
-		}
-		i++;
-	}
-	// death_checker(data, data->philo);
-	finish_all_mutex(data, data->philo);
-	exit_mutex(data);
-}
 
-int	do_pthread(t_stat *data)
-{
-	int	i;
-
-	i = 0;
+	phi = malloc(sizeof(pthread_t) * data->nb_philo);
 	data->time_start = time_phi();
 	while (i < data->nb_philo)
 	{
-		// print(time_phi(), &data->philo[i], "BEFORE THREADDDD", data);
-	// data->time_start = time_phi();
 		data->philo[i].last_meal = time_phi();
-		if (data->philo[i].id % 2 != 0)
-		{
-			if (pthread_create (&(data->philo[i].phi), NULL,
+		// if (data->philo[i].id % 2 == 0)
+		// {
+			if (pthread_create (&phi[i], 0,
 					routine, &(data->philo[i])))
 				return (ft_error("Error with creating a thread"), 0);
-		}
+		// }
 		i++;
 	}
-	// ft_sleep(1);
+	// death_checker(data, data->philo);
+	finish_all_mutex(data, phi);
+	exit_mutex(data);
 }
-
-// int	do_pthread(t_stat *data)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	data->time_start = time_phi();
-// 	while (i < data->nb_philo)
-// 	{
-// 		// print(time_phi(), &data->philo[i], "BEFORE THREADDDD", data);
-// 	// data->time_start = time_phi();
-// 		data->philo[i].last_meal = time_phi();
-// 		// if (data->philo[i].id % 2 == 0)
-// 		// {
-// 			if (pthread_create (&(data->philo[i].phi), NULL,
-// 					routine, &(data->philo[i])))
-// 				return (ft_error("Error with creating a thread"), 0);
-// 		// }
-// 		i++;
-// 	}
-// 	// i = 0;
-// 	// while (i < data->nb_philo)
-// 	// {
-// 	// 	print(time_phi(), &data->philo[i], "BEFORE THREADDDD", data);
-// 	// data->time_start = time_phi();
-// 	// 	if (data->philo[i].id % 2 != 0)
-// 	// 	{
-// 	// 		if (pthread_create (&(data->philo[i].phi), NULL,
-// 	// 				routine, &(data->philo[i])))
-// 	// 			return (ft_error("Error with creating a thread"), 0);
-// 	// 	}
-// 	// 	i++;
-// 	// }
-// 	death_checker(data, data->philo);
-// 	finish_all_mutex(data, data->philo);
-// 	exit_mutex(data);
-// 	return (0);
-// }
 
 int	main(int ac, char **av)
 {
@@ -154,7 +97,11 @@ int	main(int ac, char **av)
 		ft_error("imposible to initialize data\n");
 		return (0);
 	}
-	do_pthread(&data);
+	// while(1)
+	// {
+	// 	printf("here\n");
+	// }
+	// do_pthread(&data);
 	do_pthread_odd(&data);
 	return (1);
 }

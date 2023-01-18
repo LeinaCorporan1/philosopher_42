@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
+/*   By: corporan <corporan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 14:06:28 by lcorpora          #+#    #+#             */
-/*   Updated: 2023/01/16 17:30:26 by lcorpora         ###   ########.fr       */
+/*   Updated: 2023/01/18 02:09:00 by corporan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ int	init_must(t_stat *data)
 
 	i = data -> nb_philo;
 	init_fork = 0;
+	data->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (data->nb_philo + 1));
+	data->philo = (t_philo *)malloc(sizeof(t_philo) * (data->nb_philo + 1));
 	while (--i >= 0)
 	{
 		init_fork = pthread_mutex_init(&(data -> fork[i]), NULL);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
+/*   By: corporan <corporan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/21 12:50:22 by lcorpora          #+#    #+#             */
-/*   Updated: 2023/01/16 17:55:06 by lcorpora         ###   ########.fr       */
+/*   Updated: 2023/01/18 02:06:23 by corporan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	print(long long time, t_philo *philo, char *str, t_stat *data)
 	pthread_mutex_unlock(&philo->data->print);
 }
 
-// void	ft_sleep(long long time_to, t_stat *data)
+// void	ft_usleep(long long time_to, t_stat *data)
 // {
 // 	long long	begin_sleep;
 
@@ -100,7 +100,7 @@ void	print(long long time, t_philo *philo, char *str, t_stat *data)
 // 	}
 // }
 
-void ft_sleep(long int time_in_ms)
+void ft_usleep(long int time_in_ms)
 {
 	long int	start_time;
 
@@ -108,4 +108,5 @@ void ft_sleep(long int time_in_ms)
 	start_time = time_phi();
 	while ((time_phi() - start_time) < time_in_ms)
 		usleep(time_in_ms / 10);
+	// usleep(1);
 }
