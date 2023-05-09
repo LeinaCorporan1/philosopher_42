@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/21 14:06:15 by lcorpora          #+#    #+#             */
-/*   Updated: 2022/12/22 03:22:39 by lcorpora         ###   ########.fr       */
+/*   Created: 2023/01/25 03:57:33 by lcorpora          #+#    #+#             */
+/*   Updated: 2023/01/26 13:17:00 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	ft_isdigit(int c)
 	return (0);
 }
 
-int	check_args(char **av, int ac)
+int	check_args(char **av)
 {
 	int	i;
 	int	y;

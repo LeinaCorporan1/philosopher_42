@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: corporan <corporan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lcorpora <lcorpora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/21 19:03:42 by lcorpora          #+#    #+#             */
-/*   Updated: 2023/01/18 02:34:23 by corporan         ###   ########.fr       */
+/*   Created: 2023/01/25 04:22:29 by lcorpora          #+#    #+#             */
+/*   Updated: 2023/01/27 10:59:26 by lcorpora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,65 +16,50 @@
 # include <pthread.h>
 # include <stdlib.h>
 # include <stdio.h>
+# include <limits.h>
 # include <unistd.h>
 # include <sys/time.h>
-# include <limits.h>
 
 typedef struct s_philo
 {
-	int				r_fork;
-	int				l_fork;
-	int				id;
-	int				is_dead;
-	long long		last_meal;
-	long long		x_eat;
-	long long		all_eat;
-	struct s_stat	*data;
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	l_fork;
+	int				taken_l;
+	int				taken_r;
 	pthread_mutex_t	m_philo;
-	// pthread_t		phi;
+	int				id;
+	int				as_eaten;
+	long long		last_meal;
+	struct s_stat	*data;
+	pthread_t		phi;
 }	t_philo;
 
 typedef struct s_stat
 {
 	long long		eat;
 	long long		sleep;
+	long long		think;
 	long long		nb_philo;
 	long long		m_eat;
 	long long		die;
 	long long		philo_died;
 	long long		time_start;
 	long long		all_ate;
-	// t_philo			philo[200];
-	// pthread_mutex_t	fork[200];
-	t_philo			*philo;
-	pthread_mutex_t	*fork;
-	// pthread_mutex_t	*phi;
 	pthread_mutex_t	dead;
 	pthread_mutex_t	print;
 }	t_stat;
 
 int			init_stat(char **av, t_stat *data);
-int			init_philo(t_philo *philo, t_stat *data);
-// void		ft_usleep(long long time_info, long long begin);
-void ft_usleep(long int time_in_ms);
-void		print(long long time, t_philo *philo, char *str, t_stat *data);
+int			init_philo(t_philo **philo, t_stat *data);
+void		ft_usleep(long long time_info, t_stat *data);
+void		print(long long time, t_philo *philo, char *str);
 long long	time_phi(void);
 int			ft_atoi(const char *str);
 int			check_data_died(t_stat *data);
-void		*found(void *philosophers);
-// void		ft_usleep(long long time_to, t_stat *data);
-int			check_die_philo(t_stat *data);
+int			check_nb_eat(t_stat *data, t_philo *philo);
+void		ft_monitoring(t_stat *data, t_philo *philo);
+int			check_args(char **av);
 void		ft_error(char *str);
-void		*routine(void *philosophers);
-int			check_nb_eat(t_stat *data);
-// void		finish_all_mutex(t_stat *data, t_philo *philo);
-void	finish_all_mutex(t_stat *data, pthread_t *phi);
-void		exit_mutex(t_stat *data);
-int			check_args(char **av, int ac);
-void		death_checker(t_stat *data, t_philo *philo);
-int			data_all_eat1(t_stat *data);
-void		exit_mutex(t_stat *data);
-int			mutex_dead(t_stat *data, t_philo *philo);
 size_t		ft_strlen(char *c);
-long long	time_phi_dif(long long	x);
+void		*routine(void *philosophers);
 #endif
